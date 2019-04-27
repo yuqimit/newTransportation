@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' />
+</head>
+
+<body>
+	<div id='map'>
+	<style>
+	body {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+p {
+  font-size: 0.85em;
+  margin: 10px;
+  text-align: left;
+}
+
+/**
+* Create a position for the map
+* on the page */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/**
+* Set rules for how the map overlays
+* (info box and legend) will be displayed
+* on the page. */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 200px;
+  margin-top: 20px;
+  width: 250px;
+}
+
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 18px;
+  height: 90px;
+  margin-bottom: 40px;
+  width: 150px;
+}
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}
+	
+</style>
+</div>
+<div class='map-overlay' id='features'><h2>Citi Bike Trip Starts Frequency</h2><h3>Mahattan Station / Nov 2018</h3><div id='pd'><p>Hover over a station!</p></div></div>
+<div class='map-overlay' id='legend'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiaGFueXVhbncyMDE4IiwiYSI6ImNqcDd3YXpwYTB5YjQzcXBudWttdjM4ZDAifQ.F1FJYtBdO00DdsdSeqpoxw';
+
+var map = new mapboxgl.Map({
+  container: 'map', // container id
+  style: 'mapbox://styles/hanyuanw2018/cjtxjkk2y2vf11fnynf719gyq' // replace this with your style URL
+});
+
+map.on('load', function() {
+  // the rest of the code will go in here
+
+  	var layers = ['>3,700 (Top 20%)', '2,600-3,700 (60%-80%)', '1,700-2,600 (40%-60%)', '1,000-1,700 (20%-40%)', '<1,000 (Bottom 20%)'];
+	var colors = ['#fc1d1d', '#fbcd6a','#e3fa38', '#0afa56', '#05c4e1'];
+
+	for (i = 0; i < layers.length; i++) {
+	  var layer = layers[i];
+	  var color = colors[i];
+	  var item = document.createElement('div');
+	  var key = document.createElement('span');
+	  key.className = 'legend-key';
+	  key.style.backgroundColor = color;
+
+	  var value = document.createElement('span');
+	  value.innerHTML = layer;
+	  item.appendChild(key);
+	  item.appendChild(value);
+	  legend.appendChild(item);
+	};
+
+	map.on('mousemove', function(e) {
+	var trips = map.queryRenderedFeatures(e.point, {
+		layers: ['starts']
+	  	});
+
+	if (trips.length > 0) {
+	    document.getElementById('pd').innerHTML = '<h3><strong>' + trips[0].properties.name + '</strong></h3><p><strong><em>' + '</strong> Total trip starts:</em>' + (trips[0].properties.Customers + trips[0].properties.Subscriber)+ '</p>'+ '<p><em> Subscriber trip starts:</em>' + trips[0].properties.Subscriber + '</p>' + '<p><em>Customer trip starts:</em>' + trips[0].properties.Customers + '</p>';
+	  } else {
+	    document.getElementById('pd').innerHTML = '<p>Hover over a station?</p>';
+	  }
+	});
+
+	map.getCanvas().style.cursor = 'default';
+	map.fitBounds([[-73.84, 40.68], [-74.07, 40.82]]);
+
+	});
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
